@@ -19,7 +19,10 @@ class Monitor():
     
     
     #These are the methods for the CV:
-    def init_CV(self):
+    def init_CV(self, hsvL = (29, 86, 6), hsvU = (64, 255, 255)):
+        '''
+        This method initializes the Computer Vision variables
+        '''
         self.ap = argparse.ArgumentParser()
         self.ap.add_argument("-v", "--video",
                              help="path to the (optional) video file")
@@ -27,8 +30,8 @@ class Monitor():
                              help="max buffer size")
         self.args = vars(self.ap.parse_args())
         
-        self.greenLower = (29, 86, 6)
-        self.greenUpper = (64, 255, 255)
+        self.HSVLower = hsvL
+        self.HSVUpper = hsvU
          
         self.pts = deque(maxlen=self.args["buffer"])
         self.counter = 0
@@ -51,7 +54,7 @@ class Monitor():
         self.blurred = cv2.GaussianBlur(self.frame, (11, 11), 0)
         self.hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
         # Our operations on the frame come here
-        self.mask = cv2.inRange(self.hsv, self.greenLower, self.greenUpper)
+        self.mask = cv2.inRange(self.hsv, self.HSVLower, self.HSVUpper)
         self.mask = cv2.erode(self.mask, None, iterations=2)
         self.mask = cv2.dilate(self.mask, None, iterations=2)
          
