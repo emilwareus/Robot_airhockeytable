@@ -10,109 +10,123 @@ import numpy as np
 import cv2
 import argparse
 import imutils
+import threading
+
 
 # construct the argument parse and parse the arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-v", "--video",
-	help="path to the (optional) video file")
-ap.add_argument("-b", "--buffer", type=int, default=32,
-	help="max buffer size")
-args = vars(ap.parse_args())
-
-cap = cv2.VideoCapture(1)
-
-
-greenLower = (29, 86, 6)
-greenUpper = (64, 255, 255)
- 
-pts = deque(maxlen=args["buffer"])
-counter = 0
-direction = ""
-
-
-def get_fram():
-    # Capture frame-by-frame
-    ret, frame = cap.read()
+class CV_AHR(threading.Thread):
     
     
-
-    frame = imutils.resize(frame, width=600)
-    blurred = cv2.GaussianBlur(frame, (11, 11), 0)
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    # Our operations on the frame come here
-    mask = cv2.inRange(hsv, greenLower, greenUpper)
-    mask = cv2.erode(mask, None, iterations=2)
-    mask = cv2.dilate(mask, None, iterations=2)
-     
-    cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     
-    center = None
-    x, y = 0, 0
-    # only proceed if at least one contour was found
-	 # only proceed if at least one contour was found
-    if len(cnts) > 0:
-		 # find the largest contour in the mask, then use
-		 # it to compute the minimum enclosing circle and
-		 # centroid
-        c = max(cnts, key=cv2.contourArea)
-        ((x, y), radius) = cv2.minEnclosingCircle(c)
-        M = cv2.moments(c)
+    def __init__(self, threadID, name):
         
-        center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
- 
-		 # only proceed if the radius meets a minimum size
-        if radius > 10:
-             cv2.circle(frame, (int(x), int(y)), int(radius),(0, 255, 255), 2)
-             cv2.circle(frame, center, 5, (0, 0, 255), -1)
-             pts.appendleft(center) 
-   
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+        
+        
+        self.ap = argparse.ArgumentParser()
+        self.ap.add_argument("-v", "--video",
+                             help="path to the (optional) video file")
+        self.ap.add_argument("-b", "--buffer", type=int, default=32,
+                             help="max buffer size")
+        self.args = vars(self.ap.parse_args())
+        
+        
+        
+        
+        self.greenLower = (29, 86, 6)
+        self.greenUpper = (64, 255, 255)
+         
+        self.pts = deque(maxlen=self.args["buffer"])
+        self.counter = 0
+        self.direction = ""
+        
+       
+        
+        
+    def get_frame(self, cap):
+        # Capture frame-by-frame
+        self.ret, self.frame = cap.read()
+        
     
-    for i in np.arange(1, len(pts)):
+        self.frame = imutils.resize(self.frame, width=600)
+        self.blurred = cv2.GaussianBlur(self.frame, (11, 11), 0)
+        self.hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
+        # Our operations on the frame come here
+        self.mask = cv2.inRange(self.hsv, self.greenLower, self.greenUpper)
+        self.mask = cv2.erode(self.mask, None, iterations=2)
+        self.mask = cv2.dilate(self.mask, None, iterations=2)
+         
+        self.cnts = cv2.findContours(self.mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+        
+        self.center = None
+        self.x, self.y = 0, 0
+        # only proceed if at least one contour was found
+    	 # only proceed if at least one contour was found
+        if len(self.cnts) > 0:
+    		 # find the largest contour in the mask, then use
+    		 # it to compute the minimum enclosing circle and
+    		 # centroid
+            self.c = max(self.cnts, key=cv2.contourArea)
+            ((self.x, self.y), self.radius) = cv2.minEnclosingCircle(self.c)
+            self.M = cv2.moments(self.c)
+            
+            self.center = (int(self.M["m10"] / self.M["m00"]), int(self.M["m01"] / self.M["m00"]))
+     
+    		 # only proceed if the radius meets a minimum size
+            if self.radius > 10:
+                 cv2.circle(self.frame, (int(self.x), int(self.y)), int(self.radius),(0, 255, 255), 2)
+                 cv2.circle(self.frame, self.center, 5, (0, 0, 255), -1)
+                 self.pts.appendleft(self.center) 
+       
+        
+        for i in np.arange(1, len(self.pts)):
+    
+            if self.pts[i - 1] is None or self.pts[i] is None:
+                continue
+    
+                 
+            self.thickness = int(np.sqrt(self.args["buffer"] / float(i + 1)) * 2.5)
+            cv2.line(self.frame, self.pts[i - 1], self.pts[i], (0, 0, 255), self.thickness)
+     
+        
+        
+        cv2.putText(self.frame, self.direction, (10, 30), cv2.FONT_HERSHEY_SIMPLEX,0.85, (0, 0, 255), 3)
+        cv2.putText(self.frame, "X: {}, Y: {}".format(int(self.x), int(self.y)),
+                    (10, self.frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.35, (0, 0, 255), 1)
+     
+    	# show the frame to our screen and increment the frame counter
 
-        if pts[i - 1] is None or pts[i] is None:
-            continue
+        return self.frame, self.x, self.y
+    
+    def destroy(self):
+        self.run=False
+        
+        
 
-             
-        thickness = int(np.sqrt(args["buffer"] / float(i + 1)) * 2.5)
-        cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
- 
-    
-    
-    cv2.putText(frame, direction, (10, 30), cv2.FONT_HERSHEY_SIMPLEX,0.85, (0, 0, 255), 3)
-    cv2.putText(frame, "X: {}, Y: {}".format(int(x), int(y)),
-                (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX,
-                0.35, (0, 0, 255), 1)
- 
-	# show the frame to our screen and increment the frame counter
-    
-    
-    
-    
-    return frame, x, y
- 
-    # if the 'q' key is pressed, stop the loop
-    
-while(True):
-    key = cv2.waitKey(1) & 0xFF
-    if key == ord("q"):
-        break
-    frame, x, y = get_fram()
-    cv2.imshow("Frame", frame)
- 
-# cleanup the camera and close any open windows
-cap.release()
-cv2.destroyAllWindows()
- 
-'''
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    def run(self):
+        
+        print("Starting " + self.name)
+        self.run=True
+        
+        cap = cv2.VideoCapture(1)
+        
+        
+        
+        while(self.run): 
+            
+            
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord("q"):
+                break
+            if(cap.isOpened()):
+                frame, x, y = self.get_frame(cap)
+                cv2.imshow("Frame", frame)
 
-    # Display the resulting frame
-    cv2.imshow('frame',gray)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# When everything done, release the capture
-cap.release()
-cv2.destroyAllWindows()
-
-'''
+        
+        # cleanup the camera and close any open windows
+        cap.release()
+        cv2.destroyAllWindows()
+ 
