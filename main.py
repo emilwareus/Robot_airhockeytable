@@ -29,7 +29,7 @@ if __name__ == "__main__":
         
     #Start Threads
     CV_thread.start()
-    #COM_thread.start()
+    #COM_thread.start() #Function not properly impleentet
         
    
 
