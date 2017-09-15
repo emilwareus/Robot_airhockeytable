@@ -11,7 +11,7 @@ from Monitor import Monitor
 from CV_AHR import CV_AHR #Class for computer vision
 from S_COM import S_COM #Class for serial Communication
 
-
+#import pyserial
 
 
 
@@ -22,6 +22,7 @@ from S_COM import S_COM #Class for serial Communication
 if __name__ == "__main__":
     
     #Make Threads
+
     CV_thread = CV_AHR(1, "Computer Vision Thread", monitor = Monitor)
     COM_thread = S_COM(2, "Serial Communication Thread", monitor = Monitor)
      
@@ -29,8 +30,11 @@ if __name__ == "__main__":
         
     #Start Threads
     CV_thread.start()
-    #COM_thread.start() #Function not properly impleentet
-        
+    COM_thread.start() #Function not properly impleentet
+    
+    sleep(20)
+
+    COM_thread.destroy()    
    
 
     

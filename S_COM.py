@@ -7,8 +7,9 @@ Created on Thu Sep 14 07:09:03 2017
 
 
 import threading
+import time
 
-
+import serial
 
 class S_COM(threading.Thread):
     
@@ -28,10 +29,12 @@ class S_COM(threading.Thread):
          print("Starting ", self.name)
          self.run = True
          #self.monitor.INIT_COM(self) #TODO
+         self.monitor.init_serial(self)
          
          while(self.run):
               #TODO
-              pass
+              self.monitor.try_serial(self)
+              time.sleep(3)
          
             
     

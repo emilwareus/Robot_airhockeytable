@@ -12,6 +12,7 @@ import numpy as np
 import argparse
 import imutils
 import cv2
+import serial
 
 class Monitor():
      
@@ -101,4 +102,16 @@ class Monitor():
 
         return self.frame, self.x, self.y
     
+    def init_serial(self):
+    
+        self.ser = serial.Serial('COM6',  9600 , timeout=.1)
+    
+    def try_serial(self):
+        
+        self.ser.write(b'F')
+        data = self.ser.readline()
+        print(data)
+        
+        
+        
     
