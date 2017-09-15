@@ -104,11 +104,11 @@ class Monitor():
     
     def init_serial(self):
     
-        self.ser = serial.Serial('COM6',  9600 , timeout=.1)
+        self.ser = serial.Serial('COM3',  9600 , timeout=.1)
     
-    def try_serial(self):
-        
-        self.ser.write(b'F')
+    def try_serial(self,x,y):
+        sendPos = str(x) + ',' + str(y)
+        self.ser.write(str.encode(sendPos))
         data = self.ser.readline()
         print(data)
         

@@ -33,7 +33,9 @@ class S_COM(threading.Thread):
          
          while(self.run):
               #TODO
-              self.monitor.try_serial(self)
+              x=1
+              y=2
+              self.monitor.try_serial(self, x,y)
               time.sleep(3)
          
             
