@@ -4,24 +4,31 @@ void setup() {
 }
 void loop() {
   if(Serial.available() > 0) {
-    char Pos = Serial.read();
-    String PosString  = Pos;
-    String xPos;
-    String yPos;
-    boolean addToY=false;
-    
-    for(int i; i<PosString.size(); i++){
-      if(PosString[i]==','){
-        addToY=true;
-      }
-      if(addToy=false){
-      xPos.append(PosString[i]);
-      }
-      else{
-      yPos.append(PosString[i]);
-      }
-    }
-    Serial.println(xPos);
-    Serial.println(yPos);
+    String Pos = Serial.readString();
+    String xval = getValue(Pos, ':', 0);
+    String yval = getValue(Pos, ':', 1);
+    Serial.println("Y:" + yval);
+    Serial.println("X:" + xval);
+    int xvalue = xval.toInt();
+    int yvalue =yval.toInt();
   }
 }
+
+
+String getValue(String data, char separator, int index)
+{
+    int found = 0;
+    int strIndex[] = { 0, -1 };
+    int maxIndex = data.length() - 1;
+
+    for (int i = 0; i <= maxIndex && found <= index; i++) {
+        if (data.charAt(i) == separator || i == maxIndex) {
+            found++;
+            strIndex[0] = strIndex[1] + 1;
+            strIndex[1] = (i == maxIndex) ? i+1 : i;
+        }
+    }
+    return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
+}
+
+
