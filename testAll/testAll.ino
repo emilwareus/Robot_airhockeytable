@@ -3,14 +3,20 @@ int posX=0;
 int posY = 0;
 const int stepPin = 10; 
 const int dirPinX = 9;
-const int dirPinY = 100;
+const int dirPinYLeft = 5;
+const int stepPinYLeft = 6;
+const int dirPinYRight = 2;
+const int stepPinYRight = 3;
+// Vi borde ha båda stepPinY till samma pin
 int customDelayMapped;
+
 void setup() {
   Serial.begin(9600);
   pinMode(stepPin,OUTPUT); 
   pinMode(dirPinX,OUTPUT);
   customDelayMapped=600;
 }
+
 void loop() {
   if(Serial.available() > 0) {
     String data = Serial.readString();
@@ -87,22 +93,6 @@ void moveX(int errorX){
   }
   posX=posX+errorX;
   for( int i=0; i < abs(errorX/2); i++){
-  digitalWrite(stepPin, HIGH);
-  delayMicroseconds(customDelayMapped);
-  digitalWrite(stepPin, LOW);
-  delayMicroseconds(customDelayMapped);
-  }
-}
-
-void moveY(int errorY){
-  if(errorY>0){
-    digitalWrite(dirPinY,LOW);
-  }
-  else{
-    digitalWrite(dirPinY, HIGH);
-  }
-  posY=posY+errorY;
-  for( int i=0; i < abs(errorY/2); i++){
   digitalWrite(stepPin, HIGH);
   delayMicroseconds(customDelayMapped);
   digitalWrite(stepPin, LOW);
