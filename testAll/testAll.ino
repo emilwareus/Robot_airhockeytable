@@ -1,12 +1,14 @@
 
 int posX=0;
+int posY = 0;
 const int stepPin = 10; 
-const int dirPin = 9;
+const int dirPinX = 9;
+const int dirPinY = 100;
 int customDelayMapped;
 void setup() {
   Serial.begin(9600);
   pinMode(stepPin,OUTPUT); 
-  pinMode(dirPin,OUTPUT);
+  pinMode(dirPinX,OUTPUT);
   customDelayMapped=600;
 }
 void loop() {
@@ -21,22 +23,41 @@ void loop() {
     int stepsSetpointY = fromPixelsToSteps(setpointY);
     int stepsSetpointX = fromPixelsToSteps(setpointX);
     int errorX = stepsSetpointX-posX;
+    int errorY = stepsSetpointY-posY;
     Serial.print("oldPosX: ");
-     Serial.println(posX);
-     Serial.println(errorX+posX);
+    Serial.println(posX);
+     //Serial.println(errorX+posX);
     if(errorX+posX>8000){
-      move(8000-posX);
+      moveX(8000-posX);
       Serial.println("Max");
     }
     else if(errorX+posX<0){
-    move(-posX);
-    Serial.println("Max");
+      moveX(-posX);
+      Serial.println("Max");
     }
     else{
-    move(errorX);
+      moveX(errorX);
     }
     Serial.print("newPosX: ");
     Serial.println(posX);
+    
+    
+    Serial.print("oldPosY: ");
+    Serial.println(posY);
+     //Serial.println(errorX+posX);
+    if(errorY+posY>8000){
+      moveX(8000-posY);
+      Serial.println("Max");
+    }
+    else if(errorY+posY<0){
+      moveX(-posY);
+      Serial.println("Max");
+    }
+    else{
+      moveX(errorY);
+    }
+    Serial.print("newPosY: ");
+    Serial.println(posY);
   }
 }
 
@@ -57,15 +78,31 @@ String getValue(String data, char separator, int index)
     return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
-void move(int errorX){
+void moveX(int errorX){
   if(errorX>0){
-    digitalWrite(dirPin,LOW);
+    digitalWrite(dirPinX,LOW);
   }
   else{
-    digitalWrite(dirPin, HIGH);
+    digitalWrite(dirPinX, HIGH);
   }
   posX=posX+errorX;
   for( int i=0; i < abs(errorX/2); i++){
+  digitalWrite(stepPin, HIGH);
+  delayMicroseconds(customDelayMapped);
+  digitalWrite(stepPin, LOW);
+  delayMicroseconds(customDelayMapped);
+  }
+}
+
+void moveY(int errorY){
+  if(errorY>0){
+    digitalWrite(dirPinY,LOW);
+  }
+  else{
+    digitalWrite(dirPinY, HIGH);
+  }
+  posY=posY+errorY;
+  for( int i=0; i < abs(errorY/2); i++){
   digitalWrite(stepPin, HIGH);
   delayMicroseconds(customDelayMapped);
   digitalWrite(stepPin, LOW);
