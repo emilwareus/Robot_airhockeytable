@@ -36,7 +36,7 @@ class CV_AHR(threading.Thread):
         self.run=True
         self.monitor.init_CV(self)
         
-        cap = cv2.VideoCapture(1)  
+        cap = cv2.VideoCapture(0)  
           
         while(self.run): 
             
@@ -45,7 +45,7 @@ class CV_AHR(threading.Thread):
                 self.destroy()
                 
             if(cap.isOpened()):
-                frame, x, y = self.monitor.get_frame(self,cap=cap)
+                frame, xPuck, yPuck, xPuck, yPlayer = self.monitor.get_frame(self,cap=cap)
                 cv2.imshow("Frame", frame)
 
         
