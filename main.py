@@ -24,17 +24,17 @@ if __name__ == "__main__":
     #Make Threads
 
     CV_thread = CV_AHR(1, "Computer Vision Thread", monitor = Monitor)
-    COM_thread = S_COM(2, "Serial Communication Thread", monitor = Monitor)
+    #COM_thread = S_COM(2, "Serial Communication Thread", monitor = Monitor)
      
     
         
     #Start Threads
     CV_thread.start()
-    COM_thread.start() #Function not properly impleentet
+    #COM_thread.start() #Function not properly impleentet
     
     sleep(20)
 
-    COM_thread.destroy()    
+    #COM_thread.destroy()    
    
 
     

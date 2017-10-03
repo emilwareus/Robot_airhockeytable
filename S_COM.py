@@ -8,8 +8,7 @@ Created on Thu Sep 14 07:09:03 2017
 
 import threading
 import time
-
-import serial
+import cv2
 
 class S_COM(threading.Thread):
     
@@ -33,11 +32,10 @@ class S_COM(threading.Thread):
          
          while(self.run):
               #TODO
-              x=1
-              y=2
-              self.monitor.try_serial(self, x,y)
+              
+              self.monitor.try_serial(self)
               time.sleep(3)
-         
+              
             
     
   
