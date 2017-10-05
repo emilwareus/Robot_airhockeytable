@@ -21,7 +21,7 @@ class Monitor():
         
     
     #These are the methods for the CV:
-    def init_CV(self, hsvL = (29, 86, 6), hsvU = (64, 255, 255), hsvLP = (0, 100, 70), hsvUP =(10, 255, 255)):
+    def init_CV(self, hsvL = (29, 86, 6), hsvU = (100, 255, 255), hsvLP = (100, 150, 30), hsvUP =(255, 255, 255)):
         '''
         This method initializes the Computer Vision variables
         '''
@@ -102,7 +102,7 @@ class Monitor():
             self.center = (int(self.M["m10"] / self.M["m00"]), int(self.M["m01"] / self.M["m00"]))
      
     		 # only proceed if the radius meets a minimum size
-            if self.radius > 30:
+            if self.radius > 10:
                  cv2.circle(self.frame, (int(self.xPuck), int(self.yPuck)), int(self.radius),(0, 255, 255), 2)
                  cv2.circle(self.frame, self.center, 5, (0, 0, 255), -1)
                  self.pts.appendleft(self.center) 
@@ -141,7 +141,7 @@ class Monitor():
             self.centerPlayer = (int(self.MP["m10"] / self.MP["m00"]), int(self.MP["m01"] / self.MP["m00"]))
      
     		 # only proceed if the radius meets a minimum size
-            if self.radiusPlayer > 30:
+            if self.radiusPlayer > 10:
                  cv2.circle(self.frame, (int(self.xPlayer), int(self.yPlayer)), int(self.radiusPlayer),(0, 0, 255), 2)
                  cv2.circle(self.frame, self.centerPlayer, 5, (255, 0, 0), -1)
                  self.ptsPlayer.appendleft(self.centerPlayer) 

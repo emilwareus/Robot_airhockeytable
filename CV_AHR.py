@@ -36,7 +36,7 @@ class CV_AHR(threading.Thread):
         self.run=True
         self.monitor.init_CV(self)
         
-        cap = cv2.VideoCapture(1)  
+        cap = cv2.VideoCapture(2)  
           
         while(self.run): 
             
