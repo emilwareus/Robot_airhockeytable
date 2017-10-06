@@ -24,19 +24,20 @@ from tkinter import*
 if __name__ == "__main__":
     
     #Make Threads
-
-    CV_thread = CV_AHR(1, "Computer Vision Thread", monitor = Monitor)
-    #COM_thread = S_COM(2, "Serial Communication Thread", monitor = Monitor)
+    monitor = Monitor()
+    
+    CV_thread = CV_AHR(1, "Computer Vision Thread", monitor = monitor)
+    COM_thread = S_COM(2, "Serial Communication Thread", monitor = monitor)
     #Start Threads
     CV_thread.start()
-    #COM_thread.start() #Function not properly impleentet
+    COM_thread.start() #Function not properly impleentet
     
     #root = Tk()
     #GUI = GUI(root , monitor = Monitor)
     
-    #sleep(20)
+    sleep(10)
 
-    #COM_thread.destroy()    
+    COM_thread.destroy()    
    
 
     

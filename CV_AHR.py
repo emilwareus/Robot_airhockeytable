@@ -34,9 +34,10 @@ class CV_AHR(threading.Thread):
         print("Starting " + self.name)
         print("Press q to quit")
         self.run=True
-        self.monitor.init_CV(self)
+        self.monitor.init_CV()
         
-        cap = cv2.VideoCapture(2)  
+        
+         
           
         while(self.run): 
             
@@ -44,12 +45,11 @@ class CV_AHR(threading.Thread):
             if key == ord("q"):
                 self.destroy()
                 
-            if(cap.isOpened()):
-                frame, xPuck, yPuck, xPuck, yPlayer = self.monitor.get_frame(self,cap=cap)
+            if(self.monitor.isOpen()):
+                frame, xPuck, yPuck, xPuck, yPlayer = self.monitor.get_frame()
                 cv2.imshow("Frame", frame)
 
         
         # cleanup the camera and close any open windows
-        cap.release()
-        cv2.destroyAllWindows()
+        self.monitor.release_cap()
  

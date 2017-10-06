@@ -18,8 +18,6 @@ class Monitor():
      
     
     
-        
-    
     #These are the methods for the CV:
     def init_CV(self, hsvL = (29, 86, 6), hsvU = (100, 255, 255), hsvLP = (100, 150, 30), hsvUP =(255, 255, 255)):
         '''
@@ -54,16 +52,27 @@ class Monitor():
         self.xR = 0
         self.yR = 0
         
-        
+        self.cap = cv2.VideoCapture(2) 
     
-        	
+        self.xPuck = 0
+        self.yPuck = 0
+        self.xPlayer = 0
+        self.yPlayer = 0
     	
   
     def draw_circle(event,x,y,flags,param):
         if event == cv2.EVENT_LBUTTONDBLCLK:
             cv2.circle(img,(x,y),100,(255,0,0),-1)
+    
+    def release_cap(self):
+        self.cap.release()
+        cv2.destroyAllWindows()
+        
+        
+    def isOpen(self):
+        return self.cap.isOpened()
 
-    def get_frame(self, cap):
+    def get_frame(self):
         '''
         input: cap - cv2.VideoCapture object
         return: frame, xPuck, yPuck, xPlayer, yPlayer
@@ -72,7 +81,7 @@ class Monitor():
         of the tracked object
         '''
         # Capture frame-by-frame
-        self.ret, self.frame = cap.read()
+        self.ret, self.frame = self.cap.read()
         
     
         self.frame = imutils.resize(self.frame, width=600)
@@ -181,14 +190,19 @@ class Monitor():
         return self.frame, self.xPuck, self.yPuck, self.xPlayer, self.yPlayer 
     
     def init_serial(self):
-    
-        self.ser = serial.Serial('COM3',  9600 , timeout=.1)
+        self.xPuck = 0
+        self.yPuck = 0
+        self.xPlayer = 0
+        self.yPlayer = 0
+        print("Init Serial")
+        #self.ser = serial.Serial('COM3',  9600 , timeout=.1)
     
     def try_serial(self):
-        sendPos = str(self.yPlayer) + ':' + str(self.yR)
-        self.ser.write(str.encode(sendPos))
-        data = self.ser.readline()
-        print(data)
+        #sendPos = str(self.yPlayer) + ':' + str(self.yR)
+        #self.ser.write(str.encode(sendPos))
+        #data = self.ser.readline()
+       
+        print((self.xPuck))
         
         
         

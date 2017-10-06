@@ -8,7 +8,7 @@ Created on Thu Sep 14 07:09:03 2017
 
 import threading
 import time
-import cv2
+
 
 class S_COM(threading.Thread):
     
@@ -27,14 +27,14 @@ class S_COM(threading.Thread):
      def run(self):
          print("Starting ", self.name)
          self.run = True
-         #self.monitor.INIT_COM(self) #TODO
-         self.monitor.init_serial(self)
+        
+         self.monitor.init_serial()
          
          while(self.run):
               #TODO
               
-              self.monitor.try_serial(self)
-              time.sleep(3)
+              self.monitor.try_serial()
+              time.sleep(1)
               
             
     
