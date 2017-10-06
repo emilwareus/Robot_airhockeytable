@@ -35,6 +35,8 @@ class CV_AHR(threading.Thread):
         print("Press q to quit")
         self.run=True
         self.monitor.init_CV()
+       
+        self.init = True
         
         
          
@@ -44,9 +46,16 @@ class CV_AHR(threading.Thread):
             key = cv2.waitKey(1) & 0xFF
             if key == ord("q"):
                 self.destroy()
+            elif key == ord("c"):
+                self.init = not self.init 
+                
                 
             if(self.monitor.isOpen()):
-                frame, xPuck, yPuck, xPuck, yPlayer = self.monitor.get_frame()
+                if(not self.init):
+                    frame = self.monitor.get_frame()
+                elif(self.init):
+                    frame = self.monitor.get_blue_dot()
+                    
                 cv2.imshow("Frame", frame)
 
         

@@ -44,8 +44,8 @@ class Monitor():
         cv2.namedWindow("Frame")
         def get_mouse_click(event, x, y, flags, param):
             	if event == cv2.EVENT_LBUTTONDOWN:
-                    self.xR = x
-                    self.yR = y
+                    self.xR = (x-self.xDot_real)
+                    self.yR = (y-self.xDot_real)
                     
                     
         cv2.setMouseCallback("Frame", get_mouse_click)
@@ -58,7 +58,12 @@ class Monitor():
         self.yPuck = 0
         self.xPlayer = 0
         self.yPlayer = 0
-    	
+        self.xPuck_r = 0
+        self.yPuck_r = 0
+        self.xPlayer_r = 0
+        self.yPlayer_r = 0
+        self.xDot_real = 0
+        self.yDot_real = 0
   
     def draw_circle(event,x,y,flags,param):
         if event == cv2.EVENT_LBUTTONDBLCLK:
@@ -72,6 +77,84 @@ class Monitor():
     def isOpen(self):
         return self.cap.isOpened()
 
+
+
+    def get_blue_dot(self):
+        '''
+        input: cap - cv2.VideoCapture object
+        return: frame, xPuck, yPuck, xPlayer, yPlayer
+        
+        This method returns the image (frame) and the cordinates
+        of the tracked object
+        '''
+        # Capture frame-by-frame
+        self.ret, self.frame = self.cap.read()
+        
+    
+        self.frame = imutils.resize(self.frame, width=600)
+        self.blurred = cv2.GaussianBlur(self.frame, (11, 11), 0)
+        self.hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
+        
+        # Our operations on the frame come here to find Puck
+        HSVL = (90,130,0)
+        HSVH = (105,255,255)
+        self.mask = cv2.inRange(self.hsv, HSVL, HSVH)
+        self.mask = cv2.erode(self.mask, None, iterations=2)
+        self.mask = cv2.dilate(self.mask, None, iterations=2)
+         
+        self.cnts = cv2.findContours(self.mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+        
+        self.center = None
+        self.xDot, self.yDot = 0, 0
+        # only proceed if at least one contour was found 
+        
+        
+        if len(self.cnts) > 0:
+    		 # find the largest contour in the mask, then use
+    		 # it to compute the minimum enclosing circle and
+    		 # centroid
+            self.c = max(self.cnts, key=cv2.contourArea)
+            ((self.xDot, self.yDot), self.radius) = cv2.minEnclosingCircle(self.c)
+            self.M = cv2.moments(self.c)
+            
+            self.center = (int(self.M["m10"] / self.M["m00"]), int(self.M["m01"] / self.M["m00"]))
+     
+    		 # only proceed if the radius meets a minimum size
+            if self.radius > 3:
+                 cv2.circle(self.frame, (int(self.xDot), int(self.yDot)), (int(self.radius)+10),(0, 255, 255), 2)
+                 cv2.circle(self.frame, self.center, 5, (0, 0, 255), -1)
+                 
+       
+        
+    
+                 
+           
+
+        
+        if((self.xDot != 0) and (self.yDot != 0)):
+            self.xDot_real = self.xDot
+            self.yDot_real = self.yDot
+        
+        
+        #cv2.putText(self.frame, self.direction, (10, 30), cv2.FONT_HERSHEY_SIMPLEX,0.85, (0, 0, 255), 3)
+        cv2.putText(self.frame, "Dot: X: {}, Y: {}".format(int(self.xDot_real), int(self.yDot_real)),
+                    (10, self.frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.65, (0, 0, 255), 1)
+        
+        cv2.putText(self.frame, "Press c to continue after calibration",
+                    (200, self.frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.65, (0, 0, 255), 1)
+        
+    
+    
+            
+    	 # show the frame to our screen and increment the frame counter
+  
+        
+        return self.frame
+        
+        
+        
     def get_frame(self):
         '''
         input: cap - cv2.VideoCapture object
@@ -166,14 +249,17 @@ class Monitor():
             cv2.line(self.frame, self.ptsPlayer[i - 1], self.ptsPlayer[i], (255, 0, 0), self.thicknessPlayer)
      
         
-        
+        self.xPuck_r =  self.xPuck - self.xDot_real
+        self.yPuck_r = self.yPuck - self.yDot_real
+        self.xPlayer_r = self.xPlayer - self.xDot_real
+        self.yPlayer_r = self.yPlayer - self.yDot_real
         
         #cv2.putText(self.frame, self.direction, (10, 30), cv2.FONT_HERSHEY_SIMPLEX,0.85, (0, 0, 255), 3)
-        cv2.putText(self.frame, "Puck: X: {}, Y: {}".format(int(self.xPuck), int(self.yPuck)),
+        cv2.putText(self.frame, "Puck: X: {}, Y: {}".format(int(self.xPuck_r), int(self.yPuck_r)),
                     (10, self.frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX,
                     0.35, (0, 0, 255), 1)
         
-        cv2.putText(self.frame, "Player: X: {}, Y: {}".format(int(self.xPlayer), int(self.yPlayer)),
+        cv2.putText(self.frame, "Player: X: {}, Y: {}".format(int(self.xPlayer_r), int(self.yPlayer_r)),
                     (int(self.frame.shape[1]/2), self.frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX,
                     0.35, (0, 0, 255), 1)
      
@@ -187,13 +273,19 @@ class Monitor():
     	 # show the frame to our screen and increment the frame counter
   
         
-        return self.frame, self.xPuck, self.yPuck, self.xPlayer, self.yPlayer 
+        return self.frame 
     
     def init_serial(self):
         self.xPuck = 0
         self.yPuck = 0
         self.xPlayer = 0
         self.yPlayer = 0
+        self.xPuck_r = 0
+        self.yPuck_r = 0
+        self.xPlayer_r = 0
+        self.yPlayer_r = 0
+        self.xDot_real = 0
+        self.yDot_real = 0
         print("Init Serial")
         #self.ser = serial.Serial('COM3',  9600 , timeout=.1)
     
@@ -202,7 +294,7 @@ class Monitor():
         #self.ser.write(str.encode(sendPos))
         #data = self.ser.readline()
        
-        print((self.xPuck))
+        print((self.xPuck_r))
         
         
         

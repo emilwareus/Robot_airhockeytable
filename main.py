@@ -35,7 +35,7 @@ if __name__ == "__main__":
     #root = Tk()
     #GUI = GUI(root , monitor = Monitor)
     
-    sleep(10)
+    sleep(1)
 
     COM_thread.destroy()    
    
