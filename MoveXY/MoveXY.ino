@@ -3,38 +3,38 @@ int posX = 0;           //init starting positions
 int posY = 0;
 
 
-const int stepPinX = 4; 
-const int dirPinX = 2;
+const int stepPinY = 4; 
+const int dirPinY = 2;
 
 
-const int stepPinYLeft = 9;
-const int dirPinYLeft = 7;
+const int stepPinXLeft = 9;
+const int dirPinXLeft = 7;
 
-const int stepPinYRight = 13;
-const int dirPinYRight = 11;
+const int stepPinXRight = 13;
+const int dirPinXRight = 11;
 
 int stepsSetpointX;
 int stepsSetpointY;
 // Vi borde ha båda stepPinY till samma pin
 int customDelayMapped;
 
-int maxX = 7000;
+int maxX = 3000;
 int minX = 0;
 
-int maxY = 3000;
+int maxY = 7000;
 int minY = 0;
 
 void setup() {
   Serial.begin(9600);
   Serial.setTimeout(10);
-  pinMode(stepPinX, OUTPUT);
-  pinMode(dirPinX, OUTPUT);
+  pinMode(stepPinY, OUTPUT);
+  pinMode(dirPinY, OUTPUT);
 
-  pinMode(stepPinYRight, OUTPUT);
-  pinMode(dirPinYRight, OUTPUT);
+  pinMode(stepPinXRight, OUTPUT);
+  pinMode(dirPinXRight, OUTPUT);
 
-  pinMode(stepPinYLeft, OUTPUT);
-  pinMode(dirPinYLeft, OUTPUT);
+  pinMode(stepPinXLeft, OUTPUT);
+  pinMode(dirPinXLeft, OUTPUT);
   customDelayMapped = 600;
 }
 
@@ -99,45 +99,45 @@ void MoveXY(int errorX, int errorY) {
     boolean X  = false;
     boolean Y = false;
   //--------------------------------------------------------
-  if (errorX != 0) {
-    X = true;
-    if (errorX > 0){
-      digitalWrite(dirPinX, LOW);
-      posX += 2;
-    } 
-    else {
-      digitalWrite(dirPinX, HIGH);
-      posX -= 2;
-    }
-  }
-  //-------------------------------------------
   if (errorY != 0) {
     Y = true;
-    if (errorY > 0) {
-      digitalWrite(dirPinYLeft, HIGH);
-      digitalWrite(dirPinYRight, LOW);
+    if (errorY > 0){
+      digitalWrite(dirPinY, LOW);
       posY += 2;
     } 
     else {
-      digitalWrite(dirPinYLeft, LOW);
-      digitalWrite(dirPinYRight, HIGH);
+      digitalWrite(dirPinY, HIGH);
       posY -= 2;
     }
   }
-  if (X) {
-    digitalWrite(stepPinX, HIGH);
+  //-------------------------------------------
+  if (errorX != 0) {
+    X = true;
+    if (errorY > 0) {
+      digitalWrite(dirPinXLeft, HIGH);
+      digitalWrite(dirPinXRight, LOW);
+      posX += 2;
+    } 
+    else {
+      digitalWrite(dirPinXLeft, LOW);
+      digitalWrite(dirPinXRight, HIGH);
+      posX -= 2;
+    }
   }
   if (Y) {
-    digitalWrite(stepPinYLeft, HIGH);
-    digitalWrite(stepPinYRight, HIGH);
+    digitalWrite(stepPinY, HIGH);
+  }
+  if (X) {
+    digitalWrite(stepPinXLeft, HIGH);
+    digitalWrite(stepPinXRight, HIGH);
   }
   if(X || Y)delayMicroseconds(customDelayMapped);
-  if (X) {
-    digitalWrite(stepPinX, LOW);
-  }
   if (Y) {
-    digitalWrite(stepPinYLeft, LOW);
-    digitalWrite(stepPinYRight, LOW);
+    digitalWrite(stepPinY, LOW);
+  }
+  if (X) {
+    digitalWrite(stepPinXLeft, LOW);
+    digitalWrite(stepPinXRight, LOW);
   }
   if(X || Y)delayMicroseconds(customDelayMapped);
 }
