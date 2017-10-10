@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 Created on Wed Sep 13 17:17:22 2017
 
@@ -64,6 +64,7 @@ class Monitor():
         self.yPlayer_r = 0
         self.xDot_real = 0
         self.yDot_real = 0
+        self.cali = False
   
     def draw_circle(event,x,y,flags,param):
         if event == cv2.EVENT_LBUTTONDBLCLK:
@@ -134,6 +135,7 @@ class Monitor():
         if((self.xDot != 0) and (self.yDot != 0)):
             self.xDot_real = self.xDot
             self.yDot_real = self.yDot
+            self.cali = True
         
         
         #cv2.putText(self.frame, self.direction, (10, 30), cv2.FONT_HERSHEY_SIMPLEX,0.85, (0, 0, 255), 3)
@@ -151,10 +153,13 @@ class Monitor():
     	 # show the frame to our screen and increment the frame counter
   
         
+        
         return self.frame
         
         
-        
+    def calibrated(self):
+        return self.cali
+    
     def get_frame(self):
         '''
         input: cap - cv2.VideoCapture object
@@ -275,6 +280,9 @@ class Monitor():
         
         return self.frame 
     
+    def get_pos(self):
+        return self.xPuck_r ,self.yPuck_r, self.xPlayer_r, self.yPlayer_r
+    
     def init_serial(self):
         self.xPuck = 0
         self.yPuck = 0
@@ -287,15 +295,28 @@ class Monitor():
         self.xDot_real = 0
         self.yDot_real = 0
         print("Init Serial")
-        #self.ser = serial.Serial('COM3',  9600 , timeout=.1)
+        self.ser = serial.Serial('COM7',  9600 , timeout=.1)
     
     def try_serial(self):
-        #sendPos = str(self.yPlayer) + ':' + str(self.yR)
-        #self.ser.write(str.encode(sendPos))
-        #data = self.ser.readline()
-       
-        print((self.xPuck_r))
+        sendPos = str(self.set_x) + ':' + str(self.set_y)
+        self.ser.write(str.encode(sendPos))
         
+    def init_Regul(self):
+        #Camera
+        self.c_maxY = 390
+        self.c_maxX = 280 
+
+        #Stepper: 
+        self.s_maxY = 7000
+        self.s_maxX = 3000
+        
+        return self.c_maxY, self.c_maxX 
+      
+    
+    def regulate(self, set_y, set_x):
+        
+        self.set_x = int((float(set_x)/self.c_maxX)*self.s_maxX)
+        self.set_y = int((float(set_y)/self.c_maxY)*self.s_maxY)
         
         
     

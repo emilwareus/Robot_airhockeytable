@@ -30,7 +30,7 @@ class S_COM(threading.Thread):
         
          self.monitor.init_serial()
          
-         while(self.run):
+         while(self.run & self.monitor.calibrated()):
               #TODO
               
               self.monitor.try_serial()
