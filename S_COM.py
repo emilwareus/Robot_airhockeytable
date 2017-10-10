@@ -17,9 +17,7 @@ class S_COM(threading.Thread):
         self.threadID = threadID
         self.name = name
         self.monitor = monitor
-        
-        
-        
+
      def destroy(self):
          print(self.name, "Destryed")
          self.run = False

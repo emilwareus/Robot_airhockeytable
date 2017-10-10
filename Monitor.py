@@ -15,9 +15,7 @@ import cv2
 import serial
 
 class Monitor():
-     
-    
-    
+
     #These are the methods for the CV:
     def init_CV(self, hsvL = (29, 86, 6), hsvU = (100, 255, 255), hsvLP = (100, 150, 30), hsvUP =(255, 255, 255)):
         '''
@@ -40,7 +38,10 @@ class Monitor():
         self.ptsPlayer = deque(maxlen=self.args["buffer"])
         self.counter = 0
         self.direction = ""
-        
+
+
+
+
         cv2.namedWindow("Frame")
         def get_mouse_click(event, x, y, flags, param):
             	if event == cv2.EVENT_LBUTTONDOWN:
@@ -52,7 +53,7 @@ class Monitor():
         self.xR = 0
         self.yR = 0
         
-        self.cap = cv2.VideoCapture(2) 
+        self.cap = cv2.VideoCapture(1)
     
         self.xPuck = 0
         self.yPuck = 0
@@ -277,7 +278,7 @@ class Monitor():
             
     	 # show the frame to our screen and increment the frame counter
   
-        
+
         return self.frame 
     
     def get_pos(self):
@@ -295,6 +296,7 @@ class Monitor():
         self.xDot_real = 0
         self.yDot_real = 0
         print("Init Serial")
+
         self.ser = serial.Serial('COM7',  9600 , timeout=.1)
     
     def try_serial(self):
@@ -317,6 +319,6 @@ class Monitor():
         
         self.set_x = int((float(set_x)/self.c_maxX)*self.s_maxX)
         self.set_y = int((float(set_y)/self.c_maxY)*self.s_maxY)
-        
+
         
     

@@ -10,7 +10,11 @@ from time import sleep
 from Monitor import Monitor
 from CV_AHR import CV_AHR #Class for computer vision
 from S_COM import S_COM #Class for serial Communication
+<<<<<<< HEAD
 from Regul import Regul
+=======
+import time
+>>>>>>> 49c6cb4e28a67970cdfcd0c881fdff0134dd3242
 #from GUI import GUI
 
 from tkinter import*
@@ -32,6 +36,8 @@ if __name__ == "__main__":
     Regul_thread = Regul(3, "Regulator Thread", monitor = monitor)
     
     #Start Threads
+    sleep(5)
+
     CV_thread.start()
     sleep(2)
     COM_thread.start() #Function not properly impleentet
@@ -41,7 +47,11 @@ if __name__ == "__main__":
     #root = Tk()
     #GUI = GUI(root , monitor = Monitor)
     
+<<<<<<< HEAD
     sleep(60)
+=======
+    sleep(30)
+>>>>>>> 49c6cb4e28a67970cdfcd0c881fdff0134dd3242
 
     COM_thread.destroy()    
     Regul_thread.destroy()
