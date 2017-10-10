@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 Created on Thu Sep 14 07:09:03 2017
 
@@ -18,8 +18,10 @@ class S_COM(threading.Thread):
         self.name = name
         self.monitor = monitor
 
+     
      def destroy(self):
          print(self.name, "Destryed")
+         self.monitor.home()
          self.run = False
     
      def run(self):

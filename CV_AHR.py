@@ -24,10 +24,13 @@ class CV_AHR(threading.Thread):
         self.monitor = monitor
     
     
+    
     def destroy(self):
         print(self.name , "Destroyed")
         self.run=False
-        
+    
+    def is_open(self):
+        return self.run
         
     def run(self):
         

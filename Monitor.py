@@ -53,7 +53,7 @@ class Monitor():
         self.xR = 0
         self.yR = 0
         
-        self.cap = cv2.VideoCapture(1)
+        self.cap = cv2.VideoCapture(2)
     
         self.xPuck = 0
         self.yPuck = 0
@@ -303,14 +303,18 @@ class Monitor():
         sendPos = str(self.set_x) + ':' + str(self.set_y)
         self.ser.write(str.encode(sendPos))
         
+    def home(self):
+        sendPos = str(0) + ':' + str(0)
+        self.write(str.encode(sendPos))
+        
     def init_Regul(self):
         #Camera
         self.c_maxY = 390
         self.c_maxX = 280 
 
         #Stepper: 
-        self.s_maxY = 7000
-        self.s_maxX = 3000
+        self.s_maxY = 3500
+        self.s_maxX = 2500
         
         return self.c_maxY, self.c_maxX 
       

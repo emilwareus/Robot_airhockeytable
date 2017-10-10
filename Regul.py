@@ -25,21 +25,21 @@ class Regul(threading.Thread):
     
     def destroy(self):
         print(self.name , "Destroyed")
-        self.run=False
+        self.run_r=False
         
         
     def run(self):
         
         print("Starting " + self.name)
         print("Press q to quit")
-        self.run=True
+        self.run_r=True
         max_y, max_x = self.monitor.init_Regul()
         self.AI.init_AI(max_y, max_x)
         
         
          
           
-        while(self.run & self.monitor.calibrated()): 
+        while(self.run_r & self.monitor.calibrated()): 
             xPuck ,yPuck, xPlayer, yPlayer = self.monitor.get_pos()
             set_y,set_x = self.AI.follow_puck(int(xPuck) ,int(yPuck), int(xPlayer), int(yPlayer))
             

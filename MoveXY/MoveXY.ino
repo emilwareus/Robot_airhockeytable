@@ -18,7 +18,7 @@ int stepsSetpointY;
 // Vi borde ha båda stepPinY till samma pin
 int customDelayMapped;
 
-int maxX = 1500;
+int maxX = 2500;
 int minX = 0;
 
 int maxY = 3500;
@@ -42,19 +42,7 @@ void setup() {
 
 
 void loop() {
-  if (Serial.available() > 0) {
-    String data = Serial.readString();
-    String data1 = getValue(data, ':', 0);
-    String data2 = getValue(data, ':', 1);
-    //Serial.println("data1: " + data1);
-    //Serial.println("data2: " + data2);
-    int setpointX = data1.toInt();
-    int setpointY = data2.toInt();
-    stepsSetpointY = fromPixelsToSteps(setpointY);
-    stepsSetpointX = fromPixelsToSteps(setpointX);
-  }
-
-
+  
   if (posX > maxX ) {
     stepsSetpointX = maxX;
      Serial.println(posX);
@@ -74,8 +62,20 @@ void loop() {
   }
 
   MoveXY(stepsSetpointX - posX, stepsSetpointY - posY);  
-  }
-
+}
+void serialEvent() {
+  if (Serial.available() > 0) {
+      String data = Serial.readString();
+      String data1 = getValue(data, ':', 0);
+      String data2 = getValue(data, ':', 1);
+      //Serial.println("data1: " + data1);
+      //Serial.println("data2: " + data2);
+      int setpointX = data1.toInt();
+      int setpointY = data2.toInt();
+      stepsSetpointY = fromPixelsToSteps(setpointY);
+      stepsSetpointX = fromPixelsToSteps(setpointX);
+    }
+}
 
 String getValue(String data, char separator, int index)
 {
@@ -95,7 +95,8 @@ String getValue(String data, char separator, int index)
 }
 
 void MoveXY(int errorX, int errorY) {
-  
+
+    int time_1 = micros(); 
     boolean X  = false;
     boolean Y = false;
   //--------------------------------------------------------
@@ -131,7 +132,11 @@ void MoveXY(int errorX, int errorY) {
     digitalWrite(stepPinXLeft, HIGH);
     digitalWrite(stepPinXRight, HIGH);
   }
-  if(X || Y)delayMicroseconds(customDelayMapped);
+  if(X || Y){
+    delayMicroseconds(customDelayMapped);
+    //while((time_1 + customDelayMapped)>micros())delayMicroseconds((time_1+customDelayMapped-micros()));
+  }
+  time_1 = micros();
   if (Y) {
     digitalWrite(stepPinY, LOW);
   }
@@ -139,7 +144,10 @@ void MoveXY(int errorX, int errorY) {
     digitalWrite(stepPinXLeft, LOW);
     digitalWrite(stepPinXRight, LOW);
   }
-  if(X || Y)delayMicroseconds(customDelayMapped);
+    if(X || Y){
+     delayMicroseconds(customDelayMapped);
+    //while((time_1 + customDelayMapped)>micros())delayMicroseconds((time_1+customDelayMapped-micros()));
+    }
 }
 
 
