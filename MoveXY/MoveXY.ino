@@ -18,10 +18,10 @@ int stepsSetpointY;
 // Vi borde ha båda stepPinY till samma pin
 int customDelayMapped;
 
-int maxX = 3000;
+int maxX = 1500;
 int minX = 0;
 
-int maxY = 7000;
+int maxY = 3500;
 int minY = 0;
 
 void setup() {
@@ -103,25 +103,25 @@ void MoveXY(int errorX, int errorY) {
     Y = true;
     if (errorY > 0){
       digitalWrite(dirPinY, LOW);
-      posY += 2;
+      posY++;
     } 
     else {
       digitalWrite(dirPinY, HIGH);
-      posY -= 2;
+      posY--;
     }
   }
   //-------------------------------------------
   if (errorX != 0) {
     X = true;
-    if (errorY > 0) {
+    if (errorX > 0) {
       digitalWrite(dirPinXLeft, HIGH);
       digitalWrite(dirPinXRight, LOW);
-      posX += 2;
+      posX++;
     } 
     else {
       digitalWrite(dirPinXLeft, LOW);
       digitalWrite(dirPinXRight, HIGH);
-      posX -= 2;
+      posX--;
     }
   }
   if (Y) {
