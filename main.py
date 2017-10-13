@@ -50,8 +50,7 @@ if __name__ == "__main__":
     while(CV_thread.is_open()):
         sleep(5)
 
-
-    COM_thread.destroy()    
+    COM_thread.destroy()
     Regul_thread.destroy()
 
     

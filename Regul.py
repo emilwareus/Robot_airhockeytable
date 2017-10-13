@@ -42,5 +42,4 @@ class Regul(threading.Thread):
         while(self.run_r & self.monitor.calibrated()): 
             xPuck ,yPuck, xPlayer, yPlayer = self.monitor.get_pos()
             set_y,set_x = self.AI.follow_puck(int(xPuck) ,int(yPuck), int(xPlayer), int(yPlayer))
-            
             self.monitor.regulate(set_y,set_x)

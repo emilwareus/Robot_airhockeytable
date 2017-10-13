@@ -53,7 +53,7 @@ class Monitor():
         self.xR = 0
         self.yR = 0
         
-        self.cap = cv2.VideoCapture(2)
+        self.cap = cv2.VideoCapture(1)
     
         self.xPuck = 0
         self.yPuck = 0
@@ -297,7 +297,7 @@ class Monitor():
         self.yDot_real = 0
         print("Init Serial")
 
-        self.ser = serial.Serial('COM7',  9600 , timeout=.1)
+        self.ser = serial.Serial('COM6',  9600 , timeout=.1)
     
     def try_serial(self):
         sendPos = str(self.set_x) + ':' + str(self.set_y)
@@ -305,7 +305,7 @@ class Monitor():
         
     def home(self):
         sendPos = str(0) + ':' + str(0)
-        self.write(str.encode(sendPos))
+        self.ser.write(str.encode(sendPos))
         
     def init_Regul(self):
         #Camera

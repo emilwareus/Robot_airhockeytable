@@ -20,10 +20,10 @@ class S_COM(threading.Thread):
 
      
      def destroy(self):
-         print(self.name, "Destryed")
+         print(self.name, "Destroyed")
          self.monitor.home()
          self.run = False
-    
+
      def run(self):
          print("Starting ", self.name)
          self.run = True
@@ -32,9 +32,8 @@ class S_COM(threading.Thread):
          
          while(self.run & self.monitor.calibrated()):
               #TODO
-              
               self.monitor.try_serial()
-              time.sleep(1)
+              time.sleep(1/2)
               
             
     
